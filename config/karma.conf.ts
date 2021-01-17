@@ -1,11 +1,28 @@
+import os from 'os';
+
 import karma from 'karma';
 import 'karma-parallel';
 import 'karma-webpack';
-
+import 'yargs'
 import webpackConfig from './webpack.test';
-import os from 'os';
+import yargs from 'yargs';
 
 const cpuCount = os.cpus().length;
+
+
+yargs.option('spec', {
+    type: 'array',
+    description: '测试用例文件列表',
+    default: '**/*.spec.js'
+})
+
+const specs = (yargs.argv.spec as string[]).map(it => '../__tests__/' + it);
+
+const extPreprocessors = specs.reduce((map, specfile) => {
+    map[specfile] = ['webpack', 'sourcemap']
+    return map;
+}, {} as Record<string, string[]>)
+
 
 const configOptions = {
 
@@ -15,18 +32,16 @@ const configOptions = {
 
     files: [
         '../__tests__/prepare.js',
-        '../__tests__/**/*.spec.js',
         {
             pattern: '../lib/**/*.*',
             served: true,
             included: false,
             watched: true
         }
-    ],
-    preprocessors: {
-        '../__tests__/prepare.js': ['webpack'],
-        '../__tests__/**/*.spec.js': ['webpack', 'sourcemap']
-    },
+    ].concat(specs),
+    preprocessors: Object.assign({
+        '../__tests__/prepare.js': ['webpack']
+    }, extPreprocessors),
 
     parallelOptions: {
         executors: cpuCount,
@@ -39,7 +54,7 @@ const configOptions = {
     reporters: ['progress', 'mocha', 'coverage-istanbul'],
     
     coverageIstanbulReporter: {
-        reports: ['html', 'json', 'text-summary'],
+        reports: ['json'],
         dir: 'coverage',
         fixWebpackSourcePaths: true
     },
