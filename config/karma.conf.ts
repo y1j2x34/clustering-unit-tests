@@ -1,5 +1,11 @@
 import karma from 'karma';
+import 'karma-parallel';
+import 'karma-webpack';
+
 import webpackConfig from './webpack.test';
+import os from 'os';
+
+const cpuCount = os.cpus().length;
 
 const configOptions = {
 
@@ -22,12 +28,18 @@ const configOptions = {
         '../__tests__/**/*.spec.js': ['webpack', 'sourcemap']
     },
 
+    parallelOptions: {
+        executors: cpuCount,
+        shardStrategy: 'round-robin'
+    },
+
     webpack: webpackConfig,
+    webpackMiddleware: {},
 
     reporters: ['progress', 'mocha', 'coverage-istanbul'],
     
-    coverageIstalnbulReporter: {
-        reports: ['lcov'],
+    coverageIstanbulReporter: {
+        reports: ['html', 'json', 'text-summary'],
         dir: 'coverage',
         fixWebpackSourcePaths: true
     },
@@ -52,6 +64,7 @@ const configOptions = {
     singleRun: false,
 
     plugins: [
+        'karma-parallel',
         'karma-chrome-launcher',
         'karma-mocha',
         'karma-chai',
