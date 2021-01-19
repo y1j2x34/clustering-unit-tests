@@ -2,6 +2,8 @@ const childProcess = require('child_process');
 const status = require('../current-status');
 
 module.exports = function(ctx, params, query){
+    console.info('run test', query);
+
     if(!query || !query.spec) {
         throw new Error('Missing test files!')
     }
@@ -23,16 +25,29 @@ module.exports = function(ctx, params, query){
     const command = 'run test -- --singleRun true ' + specsArg + ' ' + browsersArg + ' ' + moreArgs;
 
     const child = childProcess.spawn('npm', command.split(' '))
-    child.on('message', console.log);
-    child.on('close', () => {
-        status.stop();
-    });
-    child.on('disconnect', () => {
-        status.error('disconnected')
-    });
-    child.on('error', (error) => {
-        status.error('error: ' + error.message + ', stack: ' + error.stack)
-    });
+    return new Promise((resolve, reject) => {
+        let messages = [];
+        child.stdout.on('data', data => {
+            messages.push(data.toString('utf8'));
+        });
+        child.stderr.on('error', error => {
+            messages.push(error.message, error.stack);
+        })
+        child.on('close', () => {
+            resolve({
+                log: messages.join('\n'),
+                coverage: require('../../../coverage/coverage-final.json')
+            })
+        });
+        child.on('error', (error) => {
+            status.error('error: ' + error.message + ', stack: ' + error.stack)
+            messages.push(error.message, error.stack);
+            reject({
+                log: messages.join('\n'),
+                coverage: require('../../../coverage/coverage-final.json')
+            })
+        });
+    })
 };
 
 function passingArrayQuery(queries, name) {
