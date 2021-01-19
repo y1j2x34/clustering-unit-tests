@@ -1,5 +1,6 @@
 const childProcess = require('child_process');
-const status = require('../current-status');
+
+let isRunning = false;
 
 module.exports = function(ctx, params, query){
     console.info('run test', query);
@@ -7,7 +8,7 @@ module.exports = function(ctx, params, query){
     if(!query || !query.spec) {
         throw new Error('Missing test files!')
     }
-    if(status.isRunning()) {
+    if(isRunning) {
         throw new Error('The previous process is not completed!')
     }
     const specs = passingArrayQuery(query, 'spec');
@@ -34,13 +35,14 @@ module.exports = function(ctx, params, query){
             messages.push(error.message, error.stack);
         })
         child.on('close', () => {
+            isRunning = false;
             resolve({
                 log: messages.join('\n'),
                 coverage: require('../../../coverage/coverage-final.json')
             })
         });
         child.on('error', (error) => {
-            status.error('error: ' + error.message + ', stack: ' + error.stack)
+            isRunning = false;
             messages.push(error.message, error.stack);
             reject({
                 log: messages.join('\n'),
