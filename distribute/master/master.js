@@ -5,6 +5,7 @@ const fetch = require('node-fetch')
 
 const yargs = require('yargs');
 const glob = require('glob');
+const { report } = require('./report');
 
 yargs.option('cluster', {
     type: 'array',
@@ -37,7 +38,7 @@ if(clusters.length === 0) {
     const eachClusterCount = Math.floor(specfiles.length / clusters.length)
 
     let leftSpecFiles = specfiles;
-
+    let allResultPromise = [];
     clusters.some(cluster => {
         if(leftSpecFiles.length === 0) {
             return true;
@@ -49,16 +50,24 @@ if(clusters.length === 0) {
             url.searchParams.append('spec', f)
         });
         console.log('cluster:', url.href)
-        fetch(url).then(response => {
+        const promise = fetch(url).then(response => {
             return response.json()
         }).then(result => {
             console.log(`============== cluster(${cluster}) log start ======================`)
             console.log(result.data.log)
             console.log(result.data.coverage)
+            console.log(result.data.resultJson)
             console.log(`============== cluster(${cluster}) log end ======================`)
+            return result;
         })
+        allResultPromise.push(promise);
         return false;
     });
+    Promise.all(allResultPromise).then(results => {
+        const coverages = results.map(it => it.data.coverage)
+        const karmaResults = results.map(it => it.data.resultJson);
+        report(coverages, karmaResults);
+    })
 }
 
 

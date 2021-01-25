@@ -50,4 +50,7 @@ describe('Test example', () => {
 
         expect(spy).to.be.calledOnce
     })
+    it('failure', () => {
+        expect(1).to.be.equal(2);
+    })
 })

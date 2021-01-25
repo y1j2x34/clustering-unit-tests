@@ -51,14 +51,23 @@ const configOptions = {
     webpack: webpackConfig,
     webpackMiddleware: {},
 
-    reporters: ['progress', 'mocha', 'coverage-istanbul'],
+    reporters: ['progress', 'mocha', 'coverage-istanbul', 'json-result'],
     
+    client: {
+        mocha: {
+            reporter: 'html'
+        }
+    },
+
     coverageIstanbulReporter: {
         reports: ['json'],
         dir: 'coverage',
         fixWebpackSourcePaths: true
     },
-
+    jsonResultReporter: {
+        outputFile: 'unit-report/karma-result.json',
+        isSynchronous: true
+    },
     port: 9876,
 
     colors: true,
@@ -88,7 +97,8 @@ const configOptions = {
         'karma-mocha-reporter',
         'karma-coverage-istanbul-reporter',
         'karma-sourcemap-loader',
-        'karma-webpack'
+        'karma-webpack',
+        'karma-structured-json-reporter'
     ],
 
 } as karma.ConfigOptions;

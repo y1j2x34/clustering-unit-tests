@@ -1,4 +1,5 @@
 coverage
+unit-report
 node_modules
 package-lock.json
 forever*.log

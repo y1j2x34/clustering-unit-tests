@@ -38,7 +38,8 @@ module.exports = function(ctx, params, query){
             isRunning = false;
             resolve({
                 log: messages.join('\n'),
-                coverage: require('../../../coverage/coverage-final.json')
+                coverage: require('../../../coverage/coverage-final.json'),
+                resultJson: require('../../../unit-report/karma-result.json')
             })
         });
         child.on('error', (error) => {
@@ -46,7 +47,8 @@ module.exports = function(ctx, params, query){
             messages.push(error.message, error.stack);
             reject({
                 log: messages.join('\n'),
-                coverage: require('../../../coverage/coverage-final.json')
+                coverage: require('../../../coverage/coverage-final.json'),
+                resultJson: require('../../../unit-report/karma-result.json')
             })
         });
     })
