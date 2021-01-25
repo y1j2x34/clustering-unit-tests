@@ -1,5 +1,5 @@
-export function mergeKarmaResults(karmaResults = []) {
-    computeBrowserType(karmaResults);
+exports.mergeKarmaResults = function mergeKarmaResults(karmaResults = []) {
+    resolveBrowserType(karmaResults);
     return {
         summary: mergeSummary(karmaResults),
         browsers: mergeBrowsers(karmaResults)
@@ -9,16 +9,18 @@ function mergeBrowsers(karmaResults) {
     const browserResultMap = {
         // type: browserResult
     };
-    karmaResults.browsers.forEach(it => {
-        const type = it.browser.type;
-        if(!browserResultMap[type]) {
-            browserResultMap[type] = it;
-        } else {
-            const result = browserResultMap[type];
-            result.browser.lastResult = mergeLastResult(result.browser.lastResult, it.browser.lastResult);
-            result.errors = result.errors.concat(it.errors);
-            result.results = result.results.concat(it.results);
-        }
+    karmaResults.forEach(karmaResult => {
+        karmaResult.browsers.forEach(it => {
+            const type = it.browser.type;
+            if(!browserResultMap[type]) {
+                browserResultMap[type] = it;
+            } else {
+                const result = browserResultMap[type];
+                result.browser.lastResult = mergeLastResult(result.browser.lastResult, it.browser.lastResult);
+                result.errors = result.errors.concat(it.errors);
+                result.results = result.results.concat(it.results);
+            }
+        })
     })
     return Object.values(browserResultMap);
 }
@@ -42,7 +44,7 @@ function mergeSummary(karmaResults) {
         }
     })
 }
-function computeBrowserType(karmaResults) {
+function resolveBrowserType(karmaResults) {
     karmaResults.forEach(karmaResult => {
         karmaResult.browsers.forEach(it => {
             const browser = it.browser;
