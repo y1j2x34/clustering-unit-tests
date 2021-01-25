@@ -1,11 +1,14 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const istanbul = require('istanbul-lib-coverage');
 const { mergeKarmaResults } = require('../../scripts/merge-karma-json')
+
+const coverageDir = path.resolve(__dirname, '../../final-report/coverage')
 
 exports.report = function report(coverages, karmaResults) {
     const mergedKarmaResut = mergeKarmaResults(karmaResults);
     
+    fs.removeSync(coverageDir);
     reportCoverage(coverages);
 
 }
@@ -24,7 +27,7 @@ function reportCoverage(coverages) {
     sourcemapStore.transformCoverage(coverageMap).then(remappedCoverageMap => {
         
         const context = libReport.createContext({
-            dir: path.resolve(__dirname, '../../final-report/coverage'),
+            dir: coverageDir,
             coverageMap: remappedCoverageMap
         });
     

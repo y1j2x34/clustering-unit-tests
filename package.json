@@ -36,7 +36,7 @@
         "cross-env": "^7.0.3",
         "ejs": "^3.1.5",
         "forever": "^3.0.4",
-        "fs-extra": "^9.0.1",
+        "fs-extra": "^9.1.0",
         "glob": "^7.1.6",
         "istanbul-lib-coverage": "^3.0.0",
         "istanbul-lib-report": "^3.0.0",
