@@ -106,6 +106,24 @@
         .suite-card-group .card{
             margin: 1rem;
         }
+        .test-summary>span>i,.test-summary>span>span {
+            vertical-align: middle;
+        }
+        .test-summary>span>span {
+            padding-left: 0.6rem;
+        }
+        .switch-browser-dropdown-menu .switch-browser-menu-item {
+            max-width: 30rem;
+            flex-wrap: nowrap;
+            padding: 0.8rem 1rem;
+        }
+        .switch-browser-menu-item .material-icons {
+            display: none;
+            padding-right: 0.6rem;
+        }
+        .switch-browser-menu-item.selected .material-icons {
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -116,19 +134,19 @@
             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                 Browsers
             </button>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu switch-browser-dropdown-menu">
                 
-                    <a class="dropdown-item" href="javascript:;" data-browser="66129810">HeadlessChrome</a>
+                    <a class="dropdown-item switch-browser-menu-item" href="javascript:;" menu-browser="66129810"><i class="material-icons text-primary">check</i>HeadlessChrome 87.0.4280 (Linux 0.0.0)</a>
                 
             </div>
         </div>
     </div>
     <div class="test-summary">
-        <span class="badge badge-light"><i class="material-icons">access_alarms</i>: {{}}</span>
-        <span class="badge badge-light"><i class="material-icons">view_list</i>: {{}}</span>
-        <span class="badge badge-success"><i class="material-icons">done</i> {{}}</span>
-        <span class="badge badge-danger"><i class="material-icons">error</i>: {{}}</span>
-        <span class="badge badge-dark"><i class="material-icons">highlight_off</i>: {{}}</span>
+        <span class="badge badge-light"><i class="material-icons">access_alarms</i> <span id="browser-total-time"></span></span>
+        <span class="badge badge-light"><i class="material-icons">view_list</i>: <span id="browser-total-count"></span></span>
+        <span class="badge badge-success"><i class="material-icons">done</i> <span id="browser-success-count"></span></span>
+        <span class="badge badge-danger"><i class="material-icons">error</i><span id="browser-error-count"></span></span>
+        <span class="badge badge-dark"><i class="material-icons">highlight_off</i> <span id="browser-skipped-count"></span></span>
     </div>
 </nav>
 <div class="summaries-progress-bar">
@@ -336,6 +354,67 @@
     
 </section>
 </body>
+
+<script>
+    var karmaResults = [{"browser":{"id":"66129810","fullName":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/87.0.4280.88 Safari/537.36","name":"HeadlessChrome 87.0.4280 (Linux 0.0.0)","state":"DISCONNECTED","lastResult":{"startTime":1611587645743,"total":7,"success":6,"failed":1,"skipped":0,"totalTime":6,"netTime":5,"error":false,"disconnected":false},"disconnectsCount":0,"noActivityTimeout":30000,"disconnectDelay":2000,"type":"HeadlessChrome"},"errors":[],"results":[{"id":"","description":"simplest test case","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645734,"endTime":1611587645735},{"id":"","description":"async test case","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":0,"log":[],"assertionErrors":[],"startTime":1611587645735,"endTime":1611587645735},{"id":"","description":"sinon fake","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":0,"log":[],"assertionErrors":[],"startTime":1611587645737,"endTime":1611587645737},{"id":"","description":"sinon spies","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645737,"endTime":1611587645738},{"id":"","description":"sinon mock","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645738,"endTime":1611587645739},{"id":"","description":"failure","suite":["Test example"],"success":false,"skipped":false,"pending":false,"time":1,"log":["AssertionError: expected 1 to equal 2","    at Context.<anonymous> (absolute/home/y1j2x34/Workspaces/lab/frontend-testing/__tests__/demo.spec.js?62a54a35c73ad922c1e2ae50fb1810c109dba9de:172:66)"],"assertionErrors":[{"name":"AssertionError","message":"expected 1 to equal 2","showDiff":true,"actual":"1","expected":"2"}],"startTime":1611587645739,"endTime":1611587645740},{"id":"","description":"test2 parallel is Working","suite":["test2"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645740,"endTime":1611587645741}],"suites":[{"suiteName":"Test example","results":[{"id":"","description":"simplest test case","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645734,"endTime":1611587645735},{"id":"","description":"async test case","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":0,"log":[],"assertionErrors":[],"startTime":1611587645735,"endTime":1611587645735},{"id":"","description":"sinon fake","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":0,"log":[],"assertionErrors":[],"startTime":1611587645737,"endTime":1611587645737},{"id":"","description":"sinon spies","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645737,"endTime":1611587645738},{"id":"","description":"sinon mock","suite":["Test example"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645738,"endTime":1611587645739},{"id":"","description":"failure","suite":["Test example"],"success":false,"skipped":false,"pending":false,"time":1,"log":["AssertionError: expected 1 to equal 2","    at Context.<anonymous> (absolute/home/y1j2x34/Workspaces/lab/frontend-testing/__tests__/demo.spec.js?62a54a35c73ad922c1e2ae50fb1810c109dba9de:172:66)"],"assertionErrors":[{"name":"AssertionError","message":"expected 1 to equal 2","showDiff":true,"actual":"1","expected":"2"}],"startTime":1611587645739,"endTime":1611587645740}]},{"suiteName":"test2","results":[{"id":"","description":"test2 parallel is Working","suite":["test2"],"success":true,"skipped":false,"pending":false,"time":1,"log":[],"assertionErrors":[],"startTime":1611587645740,"endTime":1611587645741}]}]}]
+
+    var menus = document.querySelectorAll('.switch-browser-menu-item');
+
+
+    var defaultBrowserId = karmaResults[0].browser.id;
+
+    var defaultMenu = Array.from(menus).find(it => {
+        return it.getAttribute('menu-browser') === defaultBrowserId
+    });
+
+    defaultMenu.classList.add('selected');
+    var last = defaultMenu;
+
+    menus.forEach(function(menu, i) {
+        var browserId = karmaResults[i].browser.id;
+        menu.onclick = function() {
+            last.classList.remove('selected');
+            menu.classList.add('selected');
+            last = menu;
+            updateUI(browserId);
+        }
+    })
+
+
+    var totalTimeElm = document.getElementById('browser-total-time');
+    var totalCountElm = document.getElementById('browser-total-count');
+    var successCountElm = document.getElementById('browser-success-count');
+    var errorCountElm = document.getElementById('browser-error-count');
+    var skippedCountElm = document.getElementById('browser-skipped-count');
+
+    function updateUI(browserId) {
+        var browserResult = karmaResults.find(it => it.browser.id === browserId);
+        if(!browserResult) {
+            return;
+        }
+        karmaResults.filter(it => it.browser.id !== browserId).forEach(function(result){
+            var otherBrowserId = result.browser.id;
+            var elms = document.querySelectorAll('[data-browser="'+otherBrowserId+'"]')
+            elms.forEach(function(elm) {
+                elm.classList.add('hide-browser-result')
+            });
+        });
+
+        var elms = document.querySelectorAll('[data-browser="'+browserId+'"]')
+        elms.forEach(function(elm) {
+            elm.classList.remove('hide-browser-result')
+        });
+        var browserLastResult = browserResult.browser.lastResult;
+        totalTimeElm.innerText = browserLastResult.totalTime + 'ms';
+        totalCountElm.innerText = browserLastResult.total;
+        successCountElm.innerText = browserLastResult.success;
+        errorCountElm.innerText = browserLastResult.failed;
+        skippedCountElm.innerText = browserLastResult.skipped;
+    }
+
+    updateUI(defaultBrowserId);
+
+</script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
