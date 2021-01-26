@@ -1,16 +1,26 @@
 const path = require('path');
 const fs = require('fs-extra');
 const istanbul = require('istanbul-lib-coverage');
-const { mergeKarmaResults } = require('../../scripts/merge-karma-json')
+const { mergeKarmaResults } = require('../../scripts/merge-karma-json');
+const { json2html } = require('../../scripts/karma-json2html');
 
-const coverageDir = path.resolve(__dirname, '../../final-report/coverage')
+const finalReportDir = path.resolve(__dirname, '../../final-report');
+const coverageDir = path.resolve(finalReportDir, 'coverage')
 
 exports.report = function report(coverages, karmaResults) {
     const mergedKarmaResut = mergeKarmaResults(karmaResults);
     
     fs.removeSync(coverageDir);
     reportCoverage(coverages);
+    reportUnit(mergedKarmaResut);
+}
 
+function reportUnit(karmaResults) {
+    const html = json2html(karmaResults);
+    fs.writeFileSync(
+        path.resolve(finalReportDir, 'result.html'),
+        html
+    );
 }
 
 function reportCoverage(coverages) {

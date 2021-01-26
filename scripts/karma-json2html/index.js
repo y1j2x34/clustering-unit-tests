@@ -4,20 +4,20 @@ exports.json2html = function json2html(json, title = 'Karma Result') {
 
     const tplStr = readTemplate();
 
-    const template = ejs.compile(tplStr)
+    const renderTemplate = ejs.compile(tplStr)
     json.title = title;
-    return template.render(json);
+    return renderTemplate(json);
 }
 
 function readTemplate() {
     const fs = require('fs');
     const path = require('path');
-    const templatePath = path.resolve(__dirname, './template.ejs');
+    const templatePath = path.resolve(__dirname, './html/index.ejs');
     return fs.readFileSync(templatePath).toString('utf8');
 }
 
-const html = json2html(require('../../unit-report/karma-result.json'))
+// const html = json2html(require('../../unit-report/karma-result.json'))
 
-const fs = require('fs')
+// const fs = require('fs')
 
-fs.writeFileSync('./result.html', html)
+// fs.writeFileSync('./result.html', html)

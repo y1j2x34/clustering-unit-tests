@@ -11,7 +11,23 @@ function browserName(name) {
     }
     return name;
 }
-%> 
+browsers.forEach(browser => {
+    const suiteMap = {};
+    browser.results.forEach(result => {
+        const suiteName = result.suite.join('-')
+        if(!suiteMap[suiteName]) {
+            suiteMap[suiteName] = []
+        }
+        suiteMap[suiteName].push(result)
+    })
+    browser.suites = Object.keys(suiteMap).map(suiteName => {
+        return {
+            suiteName: suiteName,
+            results: suiteMap[suiteName]
+        };
+    })
+})
+%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,6 +35,105 @@ function browserName(name) {
     <title>测试结果</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <style>
+        .material-icons {
+            font-size: 16px;
+        }
+        .suite-list .alert {
+            display: flex;
+            align-items: center;
+            padding: 0.75em 0.8em;
+        }
+        .suite-list .suite-case-desc {
+            margin-left: 1em;
+        }
+        .suite-list .suite-case-time {
+            margin-left: auto;
+        }
+        .suite-case-assertion-error > * {
+            display: block;
+        }
+        .suite-case-assertion-error-message:before,
+        .suite-case-assertion-error-actual:before {
+            content: '-';
+            color:var(--red);
+        }
+        .suite-case-assertion-error-actual {
+            color: red;
+        }
+        .suite-case-assertion-error-expected:before {
+            content: '+';
+            color: var(--blue);
+        }
+        .suite-case-item {
+            border: 1px solid;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .suite-case-item .alert {
+            margin: 0;
+        }
+        .suite-case-item.case-success {
+            border-color: var(--success)
+        }
+        .suite-case-item.case-skipped {
+            border-color: var(--dark)
+        }
+        .suite-case-item.case-pending {
+            border-color: var(--secondary)
+        }
+        .suite-case-item.case-error {
+            border-color: var(--danger)
+        }
+        .suite-case-item:before {
+            content: '';
+            width: 2px;
+            height: 100%;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: -1.25rem;
+            margin-left: -3px;
+        }
+        .suite-case-item.case-success:before {
+            background-color: var(--success)
+        }
+        .suite-case-item.case-skipped:before {
+            background-color: var(--dark)
+        }
+        .suite-case-item.case-pending:before {
+            background-color: var(--secondary)
+        }
+        .suite-case-item.case-error:before {
+            background-color: var(--danger)
+        }
+
+        .suite-case-item.case-error .alert {
+            border-bottom: 1px solid var(--danger);
+        }
+        .suite-case-log,
+        .suite-case-assertion-error
+        {
+            padding: 0 1rem;
+            font-size: 0.2rem;
+            background-color: #ffddd3;
+            color: var(--pink);
+            margin: 0;
+            border-bottom: 1px solid white;
+        }
+        .suite-case-log {
+            padding-top: 0.8rem;
+        }
+        .suite-case-log+.suite-case-log {
+            padding-top: 0;
+        }
+        .suite-case-assertion-error {
+            padding-top: 0.8rem;
+        }
+        .suite-card-group .card{
+            margin: 1rem;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
@@ -29,37 +144,99 @@ function browserName(name) {
                 Browsers
             </button>
             <div class="dropdown-menu">
-                <% browsers.forEach(browser => { %>
+                <% browsers.forEach(({browser}) => { %>
                     <a class="dropdown-item" href="javascript:;" data-browser="<%= browser.id %>"><%= browserName(browser.name) %></a>
                 <% }) %>
             </div>
         </div>
     </div>
     <div class="test-summary">
-        <span class="badge badge-light">Time: {{}}</span>
-        <span class="badge badge-light">Total: {{}}</span>
-        <span class="badge badge-success">Success: {{}}</span>
-        <span class="badge badge-danger">Failed: {{}}</span>
-        <span class="badge badge-dark">Skipped: {{}}</span>
+        <span class="badge badge-light"><i class="material-icons">access_alarms</i>: {{}}</span>
+        <span class="badge badge-light"><i class="material-icons">view_list</i>: {{}}</span>
+        <span class="badge badge-success"><i class="material-icons">done</i> {{}}</span>
+        <span class="badge badge-danger"><i class="material-icons">error</i>: {{}}</span>
+        <span class="badge badge-dark"><i class="material-icons">highlight_off</i>: {{}}</span>
     </div>
 </nav>
 <div class="summaries-progress-bar">
     <div class="progress">
-        <% browsers.forEach(browser => { %>
+        <% browsers.forEach(({browser}) => { %>
             <% 
                 function percent(value) {
                     return Math.round(value / browser.lastResult.total * 10000) / 100 + '%';
                 }
             %> 
-            <div class="progress-bar bg-success" data-browser="<%=browser.id>" style="width:<%=percent(browser.lastResult.success)>"></div>
-            <div class="progress-bar bg-danger" data-browser="<%=browser.id>" style="width:<%=percent(browser.lastResult.failed)>"></div>
-            <div class="progress-bar bg-dark" data-browser="<%=browser.id>" style="width:<%=percent(browser.lastResult.skipped)>"></div>
+            <div class="progress-bar bg-success" data-browser="<%=browser.id%>" style="width:<%=percent(browser.lastResult.success)%>"></div>
+            <div class="progress-bar bg-danger" data-browser="<%=browser.id%>" style="width:<%=percent(browser.lastResult.failed)%>"></div>
+            <div class="progress-bar bg-dark" data-browser="<%=browser.id%>" style="width:<%=percent(browser.lastResult.skipped)%>"></div>
         <% }) %>
     </div>
 </div>
-<section data-sply="scroll" class="">
+<section data-sply="scroll" class="suite-list">
     <% browsers.forEach(browser => { %>
-        <div data-browser="<%= browser.id %>"></div>
+        <div data-browser="<%= browser.id %>">
+            <% 
+                var suites = browser.suites;
+            %> 
+            <div class="suite-card-group">
+                <% suites.forEach(suite => { %>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= suite.suiteName %></h5>
+                            <% suite.results.forEach(result => { %>
+                                <% if (result.success) { %>
+                                <div class="suite-case-item case-success">
+                                <div class="alert alert-success">
+                                    <i class="material-icons">done</i>
+                                <% } else if (result.skipped) { %>
+                                <div class="suite-case-item case-skipped">
+                                <div class="alert alert-dark">
+                                    <i class="material-icons">highlight_off</i>
+                                <% } else if (result.pending) { %>
+                                <div class="suite-case-item case-pending">
+                                <div class="alert alert-secondary">
+                                    <i class="material-icons">hourglass_empty</i>
+                                <% } else { %>
+                                <div class="suite-case-item case-error">
+                                <div class="alert alert-danger">
+                                    <i class="material-icons">error</i>
+                                 <% } %> 
+                                    <span class="suite-case-desc">
+                                        <%= result.description %>
+                                    </span>
+                                    <span class="suite-case-time">
+                                        <i class="material-icons">update</i>
+                                        <%= result.endTime - result.startTime %>ms
+                                    </span>
+                                </div>
+
+                                <% if (Array.isArray(result.log)) { %>
+                                    <% result.log.forEach(logItem => { %>
+                                        <pre class="suite-case-log"><%= logItem %></pre>
+                                    <% }) %>
+                                <% } %>
+                                <% if (Array.isArray(result.assertionErrors)) { %>
+                                    <% result.assertionErrors.forEach(assertionError => { %>
+                                        <div class="suite-case-assertion-error">
+                                            <span class="suite-case-assertion-error-message text-danger">
+                                                <%= assertionError.message %> 
+                                            </span>
+                                            <span class="suite-case-assertion-error-actual text-danger">
+                                                <%= assertionError.actual %> 
+                                            </span>
+                                            <span class="suite-case-assertion-error-expected text-primary">
+                                                <%= assertionError.expected %> 
+                                            </span>
+                                        </div>
+                                    <% }) %>
+                                <% } %>
+                                </div> <!-- div.suite-case-item -->
+                            <% }) %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
     <% }) %>
 </section>
 </body>
@@ -67,8 +244,4 @@ function browserName(name) {
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
-<script>
-    const browsers = <%= browsers %>
-    
-</script>
 </html>
