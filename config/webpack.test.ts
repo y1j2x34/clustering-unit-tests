@@ -30,7 +30,9 @@ export default {
                                 }]
                             ],
                             plugins: [
-                                // '@babel/plugin-transform-runtime',
+                                ['@babel/plugin-transform-runtime', {
+                                    regenerator: true
+                                }],
                                 // '@babel/plugin-proposal-object-rest-spread',
                                 // '@babel/plugin-transform-async-to-generator'
                             ]
