@@ -38,7 +38,9 @@ const configOptions = {
             included: false,
             watched: true
         }
-    ].concat(specs),
+    ].concat(specs).concat(
+        '../__tests__/launcher.js'
+    ),
     preprocessors: Object.assign({
         '../__tests__/prepare.js': ['webpack']
     }, extPreprocessors),
@@ -73,7 +75,10 @@ const configOptions = {
     colors: true,
 
     autoWatch: true,
-    
+
+    customContextFile: './statics/karma-context.html',
+    customDebugFile: './statics/karma-debug.html',
+
     customLaunchers: {
         HeadlessChrome: {
             base: 'ChromeHeadless',
