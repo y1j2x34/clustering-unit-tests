@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon';
-import { api1, execute } from '../lib/fxcore'
+import { api1, execute } from '../lib/core'
 
 describe('Test example', () => {
     it('simplest test case', () => {
