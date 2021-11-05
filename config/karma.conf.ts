@@ -53,8 +53,13 @@ const configOptions = {
     webpack: webpackConfig,
     webpackMiddleware: {},
 
-    reporters: ['progress', 'mocha', 'coverage-istanbul', 'json-result'],
-    
+    reporters: ['progress', 'mocha', 'coverage-istanbul', 'json-result', 'html'],
+    htmlReporter: {
+        outputFile: '../unit-report/result.html',
+        groupSuites: true,
+        useCompactStyle: true,
+        useLegacyStyle: true
+    },
     client: {
         mocha: {
             reporter: 'html'
@@ -103,7 +108,8 @@ const configOptions = {
         'karma-coverage-istanbul-reporter',
         'karma-sourcemap-loader',
         'karma-webpack',
-        'karma-structured-json-reporter'
+        'karma-structured-json-reporter',
+        'karma-htmlfile-reporter'
     ],
 
 } as karma.ConfigOptions;
